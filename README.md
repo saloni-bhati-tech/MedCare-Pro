@@ -93,11 +93,6 @@ git clone https://github.com/saloni-bhati-tech/MedCare-Pro.git
 ### Billing Module
 
 ![Billing](screenshots/billing.png)
-## 🌐 Live Demo
-
-Coming Soon 🚀
-
----
 
 ## 👩‍💻 Developer
 
