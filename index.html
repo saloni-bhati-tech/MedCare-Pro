@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCare Pro - Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome & Chart.js Engine Integration Links -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- 🔒 AUTHENTICATION GATEWAY SECTION -->
+    <div id="auth-gate" class="auth-container">
+        <div class="auth-card animate-fade-in">
+            <div class="auth-brand">
+                <i class="fa-solid fa-heart-pulse logo-pulse"></i>
+                <h2>MedCare Pro</h2>
+                <p>Enterprise Administration Gateway</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="login-user" required placeholder="Enter system user identifier">
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••">
+                </div>
+                <div class="error-msg-area" id="auth-error" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 15px; font-weight: 500;"></div>
+                <button type="submit" class="btn btn-primary auth-btn" style="width: 100%; justify-content: center; padding: 12px;">Secure Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🖥️ CLINICAL DASHBOARD LAYER (HIDDEN BY DEFAULT) -->
+    <div id="app-dashboard" class="dashboard-root layout-hidden">
+        
+        <!-- SIDEBAR APPARATUS -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-hospital-user"></i> <span>MedCare Pro</span>
+            </div>
+            <div class="user-role-badge">
+                <i class="fa-solid fa-user-shield"></i> <span id="session-role">Role: Access</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" data-target="section-dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</li>
+                <li data-target="section-patients"><i class="fa-solid fa-bed-pulse"></i> Patients Manager</li>
+                <li data-target="section-appointments"><i class="fa-solid fa-calendar-check"></i> Appointments</li>
+                <li data-target="section-billing"><i class="fa-solid fa-file-invoice-dollar"></i> Billing & Finance</li>
+            </ul>
+            <button id="logout-btn" class="logout-action"><i class="fa-solid fa-right-from-bracket"></i> Exit Portal</button>
+        </nav>
+
+        <!-- MAIN CORE VIEWFIELD -->
+        <main class="main-content">
+            
+            <!-- TOP STATS COUNTER GRID -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon icon-blue"><i class="fa-solid fa-hospital-user"></i></div>
+                    <div class="kpi-data"><h3>Total Patients</h3><p id="stat-total-patients">0</p></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon icon-green"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="kpi-data"><h3>Today's Appts</h3><p id="stat-today-appointments">0</p></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon icon-orange"><i class="fa-solid fa-bed"></i></div>
+                    <div class="kpi-data"><h3>Available Beds</h3><p id="stat-avail-beds">24 / 30</p></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon icon-purple"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="kpi-data"><h3>On Duty Staff</h3><p id="stat-active-docs">2 / 3</p></div>
+                </div>
+            </section>
+
+            <!-- CONTAINER DIV FOR DYNAMIC VIEW SWITCHING -->
+            <div class="view-viewport">
+
+                <!-- MAIN WORKSPACE PAGE: METRICS & VISUALIZERS -->
+                <div id="section-dashboard" class="content-view active-view">
+                    <div class="charts-row">
+                        <div class="chart-container-card">
+                            <h3><i class="fa-solid fa-chart-line"></i> Patient Admission Ingress Trend</h3>
+                            <canvas id="chartAdmissions"></canvas>
+                        </div>
+                        <div class="chart-container-card">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Diagnostic Disease Allocation</h3>
+                            <canvas id="chartDiseases"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PATIENT OPERATIONS WORKSPACE PAGE -->
+                <div id="section-patients" class="content-view">
+                    <div class="table-controls-wrapper">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="search-input" placeholder="Query patient register by name or profile ID...">
+                        </div>
+                        <div class="filter-row">
+                            <select id="filter-disease">
+                                <option value="">Filter Diagnostic Type</option>
+                                <option value="Malaria">Malaria</option>
+                                <option value="Fracture">Fracture</option>
+                                <option value="Dengue">Dengue</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="">Filter Treatment Status</option>
+                                <option value="Admitted">Admitted</option>
+                                <option value="Under Treatment">Under Treatment</option>
+                                <option value="Recovered">Recovered</option>
+                                <option value="Discharged">Discharged</option>
+                            </select>
+                            <button id="open-patient-modal-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Admit Patient</button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Patient Board Output Table -->
+                    <div class="data-table-container shadow-border">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Contact & Meta</th>
+                                    <th>Assigned Clinician</th>
+                                    <th>Status</th>
+                                    <th>Actions Management</th>
+                                </tr>
+                            </thead>
+                            <tbody id="global-patient-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="action-export-tray" style="display: flex; gap: 10px;">
+                        <button onclick="exportCSVData()" class="btn btn-export"><i class="fa-solid fa-file-csv"></i> Export CSV Dataset</button>
+                        <button onclick="window.print()" class="btn btn-export"><i class="fa-solid fa-print"></i> Print System Sheet</button>
+                    </div>
+                </div>
+
+                <!-- APPOINTMENTS INTERACTION VIEW -->
+                <div id="section-appointments" class="content-view">
+                    <div class="scheduling-matrix">
+                        <div class="card shadow-border">
+                            <h3><i class="fa-solid fa-calendar-plus"></i> Slot Allocation Module</h3>
+                            <form id="appointment-booking-form">
+                                <div class="form-grid-pair">
+                                    <div>
+                                        <label>Target Patient</label>
+                                        <select id="appt-patient-select" required></select>
+                                    </div>
+                                    <div>
+                                        <label>Consulting Clinician</label>
+                                        <select id="appt-doctor-select" required></select>
+                                    </div>
+                                </div>
+                                <div class="form-grid-pair">
+                                    <div>
+                                        <label>Calendar Date</label>
+                                        <input type="date" id="appt-date" required>
+                                    </div>
+                                    <div>
+                                        <label>Target Timeline Slot</label>
+                                        <input type="time" id="appt-time" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary full-width-action">Confirm Allocation Slot</button>
+                            </form>
+                        </div>
+                        <div class="card shadow-border">
+                            <h3><i class="fa-solid fa-clock-history"></i> Current Scheduled Queue</h3>
+                            <div class="scrolling-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Clinician Staff</th>
+                                            <th>Target Block Window</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="global-appointments-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINANCIAL WORKSPACE SUBSECTION -->
+                <div id="section-billing" class="content-view">
+                    <div class="billing-container shadow-border card">
+                        <h2><i class="fa-solid fa-receipt"></i> Financial Ledger Breakdown</h2>
+                        <div class="billing-picker" style="margin: 15px 0;">
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);">Generate Account Statement Invoice For Patient Profile:</label>
+                            <select id="billing-patient-select" onchange="renderInvoiceSheet(this.value)" style="width: 100%; max-width: 400px;"></select>
+                        </div>
+                        <hr class="divider" style="margin: 20px 0; border-color: var(--border-color);">
+                        <div id="invoice-render-target" class="invoice-frame">
+                            <p class="neutral-hint-message">Select an admitted case profile above to construct a financial ledger breakdown.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 🎴 PATIENT COMPREHENSIVE REGISTRATION / EDIT DIALOG FORM COMPONENT -->
+    <div id="patient-modal-wrapper" class="modal-overlay hidden-modal">
+        <div class="modal-box animate-slide-down">
+            <div class="modal-header">
+                <h3 id="modal-headline-title">Register Comprehensive Admission Record</h3>
+                <button type="button" class="close-modal-trigger" id="close-modal-x">×</button>
+            </div>
+            <form id="comprehensive-patient-form">
+                <input type="hidden" id="edit-patient-idx-hash">
+                
+                <div class="form-grid-triple">
+                    <div>
+                        <label>Patient Identity Name</label>
+                        <input type="text" id="p-name" placeholder="John Doe" required>
+                    </div>
+                    <div>
+                        <label>Age Vector</label>
+                        <input type="number" id="p-age" min="0" placeholder="Years" required>
+                    </div>
+                    <div>
+                        <label>Gender Specification</label>
+                        <select id="p-gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-triple">
+                    <div>
+                        <label>Blood Signature Group</label>
+                        <select id="p-blood" required>
+                            <option value="O+">O Rh-Positive (O+)</option>
+                            <option value="A+">A Rh-Positive (A+)</option>
+                            <option value="B+">B Rh-Positive (B+)</option>
+                            <option value="AB+">AB Rh-Positive (AB+)</option>
+                            <option value="O-">O Rh-Negative (O-)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Primary Phone Metric</label>
+                        <input type="text" id="p-phone" placeholder="10-Digit Value" required>
+                    </div>
+                    <div>
+                        <label>Emergency Contact Channel</label>
+                        <input type="text" id="p-emergency" placeholder="Next of Kin Phone" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-pair">
+                    <div>
+                        <label>Primary Diagnostic Ingress Symptom</label>
+                        <input type="text" id="p-ailment" placeholder="e.g. Malaria, Appendicitis" required>
+                    </div>
+                    <div>
+                        <label>Treatment Pipeline Status</label>
+                        <select id="p-status" required>
+                            <option value="Admitted">🟢 Admitted</option>
+                            <option value="Under Treatment">🟡 Under Treatment</option>
+                            <option value="Recovered">🔵 Recovered</option>
+                            <option value="Discharged">🔴 Discharged</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-pair">
+                    <div>
+                        <label>Assigned Lead Medical Specialist</label>
+                        <select id="p-doctor" required></select>
+                    </div>
+                    <div>
+                        <label>Admission Base Date Tracker</label>
+                        <input type="date" id="p-date" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Residential Physical Address</label>
+                    <input type="text" id="p-address" placeholder="Street, City Locality Coordinate Details" required>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn btn-secondary" id="close-modal-cancel">Abort</button>
+                    <button type="submit" class="btn btn-primary">Commit Dynamic Data Operations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🩺 TOAST MESSAGE ALERT LAYER -->
+    <div id="toast-notification-node" class="toast-hidden">Alert Content Node Message</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
