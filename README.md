@@ -68,18 +68,31 @@ git clone https://github.com/saloni-bhati-tech/MedCare-Pro.git
 
 ### Login Page
 
-(Add screenshot here)
-
-### Dashboard
-
-(Add screenshot here)
-
-### Appointment Management
-
-(Add screenshot here)
+![Login](screenshots/login.png)
 
 ---
 
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+### Patient Management
+
+![Patients](screenshots/patients.png)
+
+---
+
+### Appointment Module
+
+![Appointments](screenshots/appointments.png)
+
+---
+
+### Billing Module
+
+![Billing](screenshots/billing.png)
 ## 🌐 Live Demo
 
 Coming Soon 🚀
