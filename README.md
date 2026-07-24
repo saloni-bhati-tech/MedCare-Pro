@@ -19,7 +19,7 @@ The project demonstrates front-end web development skills including responsive l
 ---
 ## 🌐 Live Demo
 
-🔗 https://saloni-bhati-tech.github.io/YOUR-REPOSITORY-NAME/
+🔗 https://saloni-bhati-tech.github.io/MedCare-Pro/
 
 ## ✨ Features
 
