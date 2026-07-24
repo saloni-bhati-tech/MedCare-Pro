@@ -1,6 +1,8 @@
 # 🏥 MedCare Pro
 
+
 > A modern Hospital Management System built using **HTML, CSS, and JavaScript**.
+
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -15,6 +17,9 @@
 The project demonstrates front-end web development skills including responsive layouts, user interface design, and JavaScript-based interactivity.
 
 ---
+## 🌐 Live Demo
+
+🔗 https://saloni-bhati-tech.github.io/YOUR-REPOSITORY-NAME/
 
 ## ✨ Features
 
